@@ -20,21 +20,53 @@ let start = document.querySelector("button")
 let word = document.querySelector("#next-word-card")
 console.log();
 start.addEventListener("click", function(event) {
-    STATE.currentWord = getNextWord();
+
     start.classList.add("w3-hide");
+
     word.classList.remove("w3-hide");
-    word.textContent = STATE.currentWord;
+
+    STATE.currentWord = getNextWord();
+
+    document.querySelector("#next-word").textContent = STATE.currentWord;
+
+    Watch.startWatch();
 })
 
-document.body.addEventListener("keyup", function(event) {
-    console.log(event);
-    console.log();
-    word.style.color[i] = "red"
-})
 
 // PASO 2: Escuchar el teclado
 
 // Requisito 1: Añadir un listener para detectar las letras introducidas por el usuario (solo letras). Mostrar por console.log
+
+document.body.addEventListener("keyup", function(event) {
+    console.log(event.key);
+
+    let keyPress = event.key 
+
+    console.log(STATE.isCorrectLetter(event.key));
+
+    if (!STATE.isCorrectLetter(keyPress)) {
+        return;
+    }  
+
+    STATE.currentProgressWord++;
+
+    let correctSubWord = STATE.currentWord.slice(0, STATE.currentProgressWord);
+    let wordToProcess = STATE.currentWord.slice(STATE.currentProgressWord);
+    document.querySelector("#next-word").innerHTML = `<span style="color:green">${correctSubWord}</span>${wordToProcess}`;
+
+    if (STATE.isWordFinished()){
+        Watch.stopWatch();
+        console.log(STATE.currentProgressWord);
+        console.log(STATE.currentWord.length);
+        STATE.currentProgressWord = 0;
+        STATE.currentWord =  getNextWord();
+        document.querySelector("#next-word").textContent = STATE.currentWord
+        Watch.startWatch();
+        
+    }
+
+
+});
 
 // Requisito 2: Cada vez que el usuario pulsa una tecla:
    // A. Ver si la tecla pulsada, es la que toca: STATE.isCorrectLetter(teclaPulsadaPorElUsuario). Si NO es la que toca, terminar la función inmediatamente
@@ -42,6 +74,9 @@ document.body.addEventListener("keyup", function(event) {
    // B. Su ha escrito correctamente la letra que toca
       // 1. Actualizar +1 la variable STATE.currentProgressWord
       // 2. Comprobar si ya hemos terminado la palanbra con STATE.isWordFinished
+        // A. Resetear la variable STATE.currentProgressWord
+        // B. Obtener una nueva palabra con getNextWord() y asignarla a STATE.currentWord;
+        // C. Actualiar document.querySelector("#next-word") con la nueva palabra
       // 3. Actualizar la UX. Os ayudará el método substring o slice. Podeis usar <span> para este cometido; partiendo la STATE.currentWord por el índice de currentProgressWord https://oscarm.tinytake.com/msc/NjYyMTUyOF8xOTE2NDI1NQ
 
 
